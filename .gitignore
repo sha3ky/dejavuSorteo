@@ -1,0 +1,20 @@
+# Frontend
+node_modules/
+dist/
+.quasar/
+.DS_Store
+*.log
+
+# Backend
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+*.sqlite3
+media/
+
+# Sistema
+.DS_Store
+Thumbs.db
