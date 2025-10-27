@@ -1,5 +1,21 @@
 <template>
+  <!-- ✅ CONTENEDOR PRINCIPAL CON V-IF/V-ELSE -->
+  <div v-if="configuracion.screensaver">
+    <div class="">
+      <q-carousel arrows animated v-model="slide" height="100vh">
+        <q-carousel-slide name="first" img-src="https://cdn.quasar.dev/img/mountains.jpg">
+        </q-carousel-slide>
+        <q-carousel-slide name="second" img-src="https://cdn.quasar.dev/img/parallax1.jpg">
+        </q-carousel-slide>
+        <q-carousel-slide name="third" img-src="https://cdn.quasar.dev/img/parallax2.jpg">
+        </q-carousel-slide>
+      </q-carousel>
+    </div>
+  </div>
+
+  <!-- ✅ ELSE IMPLÍCITO - cuando screensaver es false -->
   <div
+    v-else
     class="container-responsive"
     :style="{
       backgroundImage: `url(${configuracion.background})`,
@@ -17,11 +33,14 @@
     >
       Sorteo&nbsp;&nbsp;&nbsp;DEJAVÙ
     </q-toolbar-title>
+
+    <!-- ✅ CONTADOR DENTRO DEL CONTENEDOR -->
     <div>
       <h3 style="color: white; text-align: center; font-weight: 700">
-        Comenazamos en {{ cuentaAtras }}
+        Comenzamos en {{ cuentaAtras }}
       </h3>
     </div>
+
     <!-- Números centrados en el medio -->
     <div class="numeros-container">
       <div
@@ -46,8 +65,10 @@
         {{ digito3 }}
       </div>
     </div>
+
     <button class="boton-iniciar" @click="iniciarSorteoCompleto">🎰 INICIAR SORTEO</button>
 
+    <!-- Particles de explosión -->
     <div class="explosion-container">
       <div
         v-for="particula in particulasExplosion"
@@ -72,7 +93,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 // Particles normales (background)
-
+const slide = ref('first')
 const particulasExplosion = ref([])
 const crearExplosion = () => {
   particulasExplosion.value = Array.from({ length: 250 }, (_, i) => ({
@@ -100,7 +121,8 @@ const configuracion = ref({
   color_primario: '#9c9e25',
   fuente: 'Chewy',
   background: '/images/discoBall2.png',
-  numeroGanador: '129', // ✅ Puede ser '7', '78' o '786'
+  numeroGanador: '129',
+  screensaver: false, // ✅ Puede ser '7', '78' o '786'
 })
 
 const numero1 = ref('')
