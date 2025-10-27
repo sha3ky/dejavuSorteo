@@ -24,9 +24,27 @@
     </div>
     <!-- Números centrados en el medio -->
     <div class="numeros-container">
-      <div v-if="digitosNecesarios >= 1" class="digito-fijo">{{ digito1 }}</div>
-      <div v-if="digitosNecesarios >= 2" class="digito-fijo">{{ digito2 }}</div>
-      <div v-if="digitosNecesarios >= 3" class="digito-fijo">{{ digito3 }}</div>
+      <div
+        v-if="digitosNecesarios >= 1"
+        class="digito-fijo"
+        :style="{ 'font-family': configuracion.fuente }"
+      >
+        {{ digito1 }}
+      </div>
+      <div
+        v-if="digitosNecesarios >= 2"
+        class="digito-fijo"
+        :style="{ 'font-family': configuracion.fuente }"
+      >
+        {{ digito2 }}
+      </div>
+      <div
+        v-if="digitosNecesarios >= 3"
+        class="digito-fijo"
+        :style="{ 'font-family': configuracion.fuente }"
+      >
+        {{ digito3 }}
+      </div>
     </div>
     <button class="boton-iniciar" @click="iniciarSorteoCompleto">🎰 INICIAR SORTEO</button>
 
@@ -80,7 +98,7 @@ const activarExplosion = () => {
 }
 const configuracion = ref({
   color_primario: '#9c9e25',
-  fuente: 'Monoton',
+  fuente: 'Chewy',
   background: '/images/discoBall2.png',
   numeroGanador: '129', // ✅ Puede ser '7', '78' o '786'
 })
@@ -113,7 +131,7 @@ const repartirNumeros = () => {
 }
 
 // Cada dígito tiene sus propias variables
-let tiempo1 = 500
+let tiempo1 = 200
 let tiempo2 = 300
 let tiempo3 = 100
 const tiempoMinimo = 50
@@ -472,7 +490,7 @@ particles-container,
 
 .digito-fijo {
   font-size: 25vh;
-  font-family: 'Monoton', cursive;
+  /* font-family: 'Monoton', cursive; */
   background: linear-gradient(-225deg, #ff00cc, #3333ff, #00ffcc);
   background-size: 200% auto; /* ✅ Faltaba esto */
   background-clip: text;
@@ -513,5 +531,25 @@ particles-container,
   .numeros-container {
     gap: 3vh;
   }
+}
+/* EN TU CSS */
+.disco-font-1 {
+  font-family: 'Monoton', cursive; /* Muy retro años 80 */
+}
+
+.disco-font-2 {
+  font-family: 'Luckiest Guy', cursive; /* Divertida y gruesa */
+}
+
+.disco-font-3 {
+  font-family: 'Bungee', cursive; /* Energética */
+}
+
+.disco-font-4 {
+  font-family: 'Righteous', cursive; /* Estilo cartel neón */
+}
+
+.disco-font-5 {
+  font-family: 'Chewy', cursive; /* Joven y divertida */
 }
 </style>
