@@ -1,5 +1,27 @@
 <template>
   <!-- ✅ CONTENEDOR PRINCIPAL CON V-IF/V-ELSE -->
+  <div v-if="esDispositivoMovil" class="floating-admin-icon">
+    <q-btn
+      color="accent"
+      icon="admin_panel_settings"
+      @click="abrirModalAdmin"
+      class="floating-btn"
+    />
+  </div>
+  <q-dialog v-model="modalAdminAbierto">
+    <q-card class="admin-login-card">
+      <q-card-section>
+        <h4>Acceso Admin</h4>
+        <q-input v-model="usuario" label="Usuario" />
+        <q-input v-model="password" label="Contraseña" type="password" />
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Cancelar" v-close-popup />
+        <q-btn color="primary" label="Ingresar" @click="loginAdmin" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   <div v-if="configuracion.screensaver">
     <div class="">
       <q-carousel arrows animated v-model="slide" height="100vh">
@@ -93,8 +115,43 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 // Particles normales (background)
+const esDispositivoMovil = ref(false)
+const modalAdminAbierto = ref(false)
+const usuario = ref('')
+const password = ref('')
 const slide = ref('first')
 const particulasExplosion = ref([])
+const detectarDispositivo = () => {
+  debugger
+  /* esDispositivoMovil.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent,
+  ) */
+  esDispositivoMovil.value = true
+}
+
+const abrirModalAdmin = () => {
+  modalAdminAbierto.value = true
+}
+const loginAdmin = async () => {
+  // Lógica de login con Django
+  try {
+    const response = await fetch('/api/login/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: usuario.value,
+        password: password.value,
+      }),
+    })
+
+    if (response.ok) {
+      // Redirigir al panel admin completo
+      window.location.href = '/admin'
+    }
+  } catch (error) {
+    console.error('Error login:', error)
+  }
+}
 const crearExplosion = () => {
   particulasExplosion.value = Array.from({ length: 250 }, (_, i) => ({
     id: i,
@@ -356,10 +413,29 @@ const desactivarSorteoCompleto = () => {
 onMounted(() => {
   console.log('App montada - listo para sorteo!')
   repartirNumeros() // ✅ Para que se vean los dígitos iniciales
+  detectarDispositivo()
 })
 </script>
 
 <style scoped>
+.floating-admin-icon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.floating-btn {
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.admin-login-card {
+  width: 300px;
+  max-width: 90vw;
+}
+
 particles-container,
 .explosion-container {
   position: absolute;
@@ -478,7 +554,7 @@ particles-container,
 .title-top {
   position: relative;
   z-index: 2;
-  font-size: clamp(2rem, 8vw, 80px) !important;
+  font-size: clamp(3rem, 8vw, 80px) !important;
   margin-top: 20px;
   flex-shrink: 0; /* No se reduce */
   height: auto;
@@ -503,31 +579,41 @@ particles-container,
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5vh;
-  flex-grow: 1; /* ✅ Ocupa el espacio disponible */
+  gap: 2vw; /* ✅ Usar vw para gap responsive */
+  flex-grow: 1;
   width: 100%;
   position: relative;
   z-index: 2;
+  padding: 0 5%; /* ✅ Padding para móviles */
+  box-sizing: border-box;
 }
 
 .digito-fijo {
-  font-size: 25vh;
-  /* font-family: 'Monoton', cursive; */
+  /* ✅ Tamaño responsive con clamp() */
+  font-size: clamp(3rem, 15vw, 20vh);
+
+  /* ✅ Ancho y altura responsive */
+  min-width: clamp(4rem, 18vw, 25vh);
+  height: clamp(4rem, 18vw, 25vh);
+
   background: linear-gradient(-225deg, #ff00cc, #3333ff, #00ffcc);
-  background-size: 200% auto; /* ✅ Faltaba esto */
+  background-size: 200% auto;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: textclip 3s linear infinite; /* ✅ Animación diferente */
+  animation: textclip 3s linear infinite;
   text-align: center;
-  min-width: 30vh;
-  height: 30vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 0.5vh solid rgba(255, 255, 255, 0.3);
-  border-radius: 3vh;
+
+  /* ✅ Border responsive */
+  border: clamp(2px, 0.5vh, 8px) solid rgba(255, 255, 255, 0.3);
+  border-radius: clamp(1rem, 3vw, 4vh);
+
+  /* ✅ Asegurar que no se rompa en móviles */
+  flex-shrink: 0;
 }
 
 @keyframes textclip {
@@ -537,21 +623,30 @@ particles-container,
 }
 
 /* Responsive para móviles */
+/* ✅ Media queries para ajustes específicos */
 @media (max-width: 768px) {
-  .title-top {
-    font-size: clamp(1.8rem, 7vw, 60px) !important;
-    margin-top: 15px;
-    min-height: 80px;
+  .numeros-container {
+    gap: 2vw; /* ✅ Menor gap en móviles */
+    flex-wrap: nowrap; /* ✅ Evitar wrap */
+    overflow-x: auto; /* ✅ Scroll horizontal si es necesario */
   }
 
   .digito-fijo {
-    font-size: 20vh;
-    min-width: 25vh;
-    height: 25vh;
+    font-size: clamp(2.5rem, 12vw, 15vh);
+    min-width: clamp(6.5rem, 15vw, 20vh);
+    height: clamp(6.5rem, 15vw, 20vh);
+  }
+}
+
+@media (max-width: 480px) {
+  .numeros-container {
+    gap: 1vw;
   }
 
-  .numeros-container {
-    gap: 3vh;
+  .digito-fijo {
+    font-size: clamp(2rem, 10vw, 12vh);
+    min-width: clamp(6rem, 12vw, 18vh);
+    height: clamp(6rem, 12vw, 18vh);
   }
 }
 /* EN TU CSS */
